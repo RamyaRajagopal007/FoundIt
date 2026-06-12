@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FoundIt | Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    if (localStorage.getItem("role") !== "admin") {
+      alert("Admin access only");
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>🔐 FoundIt – Admin Dashboard</h1>
+</header>
+
+<section>
+  <h2>🔴 Lost Items</h2>
+  <div id="lostList" class="grid"></div>
+</section>
+
+<section>
+  <h2>🟢 Found Items</h2>
+  <div id="foundList" class="grid"></div>
+</section>
+
+<script>
+  const lostItems = JSON.parse(localStorage.getItem("lostItems")) || [];
+  const foundItems = JSON.parse(localStorage.getItem("foundItems")) || [];
+
+  function isMatched(name) {
+    return foundItems.some(
+      f => f.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  const lostDiv = document.getElementById("lostList");
+  const foundDiv = document.getElementById("foundList");
+
+  lostItems.forEach((item, index) => {
+    lostDiv.innerHTML += `
+      <div class="card ${isMatched(item.name) ? 'matched' : ''}">
+        ${isMatched(item.name) ? "<span class='badge'>MATCH FOUND</span>" : ""}
+        <p><strong>Item:</strong> ${item.name}</p>
+        <p><strong>Category:</strong> ${item.category}</p>
+        <p><strong>Lost Place:</strong> ${item.place}</p>
+        <p><strong>Reporter:</strong> ${item.reporter}</p>
+        <p><strong>Email:</strong> ${item.email}</p>
+        <p><strong>Status:</strong> ${item.status}</p>
+
+        <button onclick="resolveLost(${index})">✅ Resolve</button>
+        <button class="delete-btn" onclick="deleteLost(${index})">🗑️ Delete</button>
+      </div>
+    `;
+  });
+
+  foundItems.forEach((item, index) => {
+    foundDiv.innerHTML += `
+      <div class="card">
+        <p><strong>Item:</strong> ${item.name}</p>
+        <p><strong>Category:</strong> ${item.category}</p>
+        <p><strong>Found Place:</strong> ${item.place}</p>
+        <p><strong>Reporter:</strong> ${item.reporter}</p>
+        <p><strong>Email:</strong> ${item.email}</p>
+        <p><strong>Status:</strong> ${item.status}</p>
+
+        <button onclick="resolveFound(${index})">✅ Resolve</button>
+        <button class="delete-btn" onclick="deleteFound(${index})">🗑️ Delete</button>
+      </div>
+    `;
+  });
+
+  function resolveLost(i) {
+    lostItems[i].status = "Resolved";
+    localStorage.setItem("lostItems", JSON.stringify(lostItems));
+    location.reload();
+  }
+
+  function resolveFound(i) {
+    foundItems[i].status = "Resolved";
+    localStorage.setItem("foundItems", JSON.stringify(foundItems));
+    location.reload();
+  }
+
+  function deleteLost(i) {
+    if (confirm("Delete lost report?")) {
+      lostItems.splice(i, 1);
+      localStorage.setItem("lostItems", JSON.stringify(lostItems));
+      location.reload();
+    }
+  }
+
+  function deleteFound(i) {
+    if (confirm("Delete found report?")) {
+      foundItems.splice(i, 1);
+      localStorage.setItem("foundItems", JSON.stringify(foundItems));
+      location.reload();
+    }
+  }
+</script>
+
+</body>
+</html>

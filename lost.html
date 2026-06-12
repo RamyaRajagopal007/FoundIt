@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FoundIt | Report Lost</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg">
+
+
+<header>
+  <h1>🔍 FoundIt</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="found.html">Report Found</a>
+    <a href="search.html">Search</a>
+  </nav>
+</header>
+
+<section class="form-card">
+  <h2>Report Lost Item</h2>
+
+  <input id="name" placeholder="Item Name">
+  <input id="category" placeholder="Category">
+  <input id="place" placeholder="Lost Place">
+  <input id="reporter" placeholder="Your Name">
+  <input id="email" placeholder="Your Email">
+
+  <button onclick="submitLost()">Submit Report</button>
+</section>
+
+<script>
+function submitLost() {
+  const lostItems = JSON.parse(localStorage.getItem("lostItems")) || [];
+
+  const itemName = document.getElementById("name").value;
+  const category = document.getElementById("category").value;
+  const place = document.getElementById("place").value;
+  const reporter = document.getElementById("reporter").value;
+  const email = document.getElementById("email").value;
+
+  if (!itemName || !category || !place || !reporter || !email) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  lostItems.push({
+    name: itemName,
+    category: category,
+    place: place,
+    reporter: reporter,
+    email: email,
+    status: "Pending"
+  });
+
+  localStorage.setItem("lostItems", JSON.stringify(lostItems));
+  window.location.href = "success.html";
+}
+</script>
+
+</body>
+</html>
